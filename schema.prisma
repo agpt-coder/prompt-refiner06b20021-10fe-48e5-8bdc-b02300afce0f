@@ -1,0 +1,85 @@
+// datasource db defines the database connection settings.
+// It is configured for PostgreSQL and uses an environment variable for the connection URL.
+// The 'extensions' feature enables the use of PostgreSQL-specific data types.
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+}
+
+// generator db configures Prisma Client settings.
+// It is set up to use Prisma Client Python with asyncio interface and specific features.
+generator db {
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = 5
+  previewFeatures      = ["postgresqlExtensions"]
+}
+
+model User {
+  id          String        @id @default(dbgenerated("gen_random_uuid()"))
+  email       String        @unique
+  password    String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  role        Role
+  prompts     Prompt[]
+  RateLimit   RateLimit[]
+  AccessToken AccessToken[]
+  APILog      APILog[]
+}
+
+model Prompt {
+  id           String       @id @default(dbgenerated("gen_random_uuid()"))
+  originalText String
+  refinedText  String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  userId       String
+  status       PromptStatus
+
+  User User @relation(fields: [userId], references: [id])
+}
+
+model RateLimit {
+  id           String   @id @default(dbgenerated("gen_random_uuid()"))
+  userId       String
+  attempts     Int
+  firstAttempt DateTime
+  lastAttempt  DateTime
+
+  User User @relation(fields: [userId], references: [id])
+}
+
+model AccessToken {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  userId    String
+  token     String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  User User @relation(fields: [userId], references: [id])
+}
+
+model APILog {
+  id           String   @id @default(dbgenerated("gen_random_uuid()"))
+  endpoint     String
+  responseTime Int
+  createdAt    DateTime @default(now())
+  success      Boolean
+  userId       String?
+
+  User User? @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  USER
+  DEVELOPER
+}
+
+enum PromptStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+

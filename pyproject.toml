@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "prompt-refiner"
+version = "0.1.0"
+description = "To accomplish the task of creating a single API endpoint that takes in a string LLM prompt and returns a refined version improved by GPT4, several steps and pieces of information are critical based on our discussion and research. First, integration of the OpenAI Python package with FastAPI is essential. The process begins with installing the OpenAI package via pip. After installation, it's necessary to import OpenAI into the FastAPI application to facilitate communication with GPT-4. The core functionality involves creating an endpoint, for example, `/refine-prompt`, within the FastAPI app, which accepts a LLM prompt from the user as the request body. This endpoint will process the input by sending it to the OpenAI API, specifying GPT-4 as the model, along with the system's instruction: 'You are a prompt refiner. Use advanced prompt engineering techniques to refine the user's prompt.' Once GPT-4 processes and refines the prompt based on the given instruction, the refined prompt is then returned to the user as the response. The tech stack for this implementation includes Python as the programming language, FastAPI as the API framework, PostgreSQL for any required database functionality, and Prisma as the ORM. This detailed approach ensures a robust and efficient system for refining user prompts through GPT-4, leveraging FastAPI's asynchronous handling and OpenAI's powerful language model."
+authors = ["AutoGPT <info@agpt.co>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+fastapi = "^0.68.0"
+openai = "*"
+passlib = {version = "^1.7.4", extras = ["bcrypt"]}
+prisma = "*"
+pydantic = "*"
+python-jose = {version = "^3.3.0", extras = ["cryptography"]}
+uvicorn = "*"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
